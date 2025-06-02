@@ -1,14 +1,8 @@
-// src/services/habitacionService.js
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = 'http://127.0.0.1:8000/api/habitaciones';
+const API_URL = "http://localhost:8000/api"; // Ajusta al URL correcto
 
-export const getHabitaciones = async () => {
-  const response = await axios.get(API_URL);
-  return response.data;
-};
-
-export const crearHabitacion = async (datos) => {
-  const response = await axios.post(API_URL, datos);
+export const obtenerHabitaciones = async () => {
+  const response = await axios.get(`${API_URL}/habitaciones`);
   return response.data;
 };
