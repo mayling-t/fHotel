@@ -1,4 +1,5 @@
 /* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -7,4 +8,14 @@ body {
 a {
   text-decoration: none;
   color: inherit;
+}
+.page-background {
+  background-image: url('/src/assets/fondo.jpg'); /* cambia a tu fondo */
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  padding-top: 100px; /* espacio para el navbar */
+}
+.titulo-cursiva {
+  font-family: 'Dancing Script', cursive;
 }
