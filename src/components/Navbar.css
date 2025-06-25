@@ -1,67 +1,39 @@
+/* src/components/Navbar.css */
+
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #ffffff; /* Fondo blanco */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
   z-index: 1000;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-}
-
-.logo img {
-  width: 30px;
-  height: 30px;
-  margin-right: 0.5rem;
-}
-
-.logo span {
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: #1560BD; /* Azul fuerte similar al azul maya oscuro */
-}
-
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 1.5rem;
-}
-
-.nav-links li {
-  cursor: pointer;
-  font-weight: bold;
-  padding: 0.5rem;
-  color: #1560BD; /* Azul fuerte */
-  transition: all 0.3s ease;
-}
-
-.nav-links li:hover {
-  color: #73C2FB; /* Azul maya claro al pasar el mouse */
-}
-
-.nav-links li.active {
-  color: #4682B4; /* Azul medio tipo acero (Steel Blue) */
-  border-bottom: 2px solid #4682B4;
-}
-
-.reservar-btn {
-  background-color: #1560BD; /* Azul fuerte profesional */
-  color: white !important; /* Texto blanco forzado */
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  border: none;
+.nav-link {
+  font-weight: 500;
+  color: #000;
   text-decoration: none;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 4px;
+  transition: border-color 0.3s, color 0.3s;
 }
 
-.reservar-btn:hover {
-  background-color: #4682B4; /* Azul medio al pasar mouse */
-  transform: scale(1.05);
+.nav-link:hover {
+  color: #2C3E86; /* azul fuerte */
+}
+
+.nav-link.active {
+  border-bottom: 2px solid #2C3E86;
+  color: #2C3E86;
+}
+
+.btn-primary {
+  background-color: #2C3E86 !important; /* azul fuerte */
+  border-color: #2C3E86 !important;
+  color: white;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #1d2b5a !important; /* un poco más oscuro */
+}
+.navbar-container {
+  max-width: 1140px; /* Puedes ajustar esto: 1140px, 960px, etc. */
+  margin: 0 auto;
 }

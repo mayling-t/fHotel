@@ -1,54 +1,65 @@
-// src/pages/Home.jsx
-
-import React, { useState } from 'react';
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import fondo1 from '../assets/fondo1.jpg';
+import fondo2 from '../assets/fondo2.jpg';
+import logo from '../assets/logo.png';
 import Navbar from '../components/Navbar';
-import fondo from '../assets/fondo.jpg'; // Asegúrate que exista esta imagen
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState('inicio');
-
   return (
-    <div
-      className="home-container"
-      style={{
-        backgroundImage: `url(${fondo})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        minHeight: '100vh',
-        paddingTop: '80px',
-        color: 'white',
-      }}
-    >
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
+      <Navbar />
 
-      <div style={{ padding: '20px', backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: '10px', margin: '20px' }}>
-        {activeTab === 'inicio' && (
-          <div>
-            <h1>Bienvenido a Cielo Azul</h1>
-            <p>Tu descanso frente al mar te espera.</p>
-          </div>
-        )}
+      {/* Carrusel */}
+      <div id="carouselExample" className="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div className="carousel-inner">
+          {[fondo1, fondo2].map((img, i) => (
+            <div
+              key={i}
+              className={`carousel-item ${i === 0 ? 'active' : ''}`}
+              style={{ height: '100vh', overflow: 'hidden' }}
+            >
+              <img
+                src={img}
+                className="d-block w-100"
+                alt={`Slide ${i}`}
+                style={{ objectFit: 'cover', height: '100%', filter: 'brightness(0.6)' }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
 
-        {activeTab === 'sobreNosotros' && (
-          <div>
-            <h2>Sobre Nosotros</h2>
-            <p>Somos un hotel boutique frente al mar, con servicios exclusivos para ti.</p>
-          </div>
-        )}
+      {/* Contenedor blanco semitransparente */}
+      <div
+        className="position-absolute top-0 start-50 translate-middle-x p-4 bg-white bg-opacity-75 rounded shadow"
+        style={{
+          marginTop: '120px',
+          maxWidth: '750px',
+          width: '90%',
+          zIndex: 10,
+        }}
+      >
+        <div className="text-center">
+          <img src={logo} alt="Logo" style={{ height: '250px', marginBottom: '35px' }} />
+          <p style={{ fontSize: '1.2rem' }}>
+            Descubre una experiencia única de lujo, confort y vistas espectaculares.
+          </p>
+        </div>
+      </div>
 
-        {activeTab === 'explorar' && (
-          <div>
-            <h2>Explorar</h2>
-            <p>Descubre actividades, playas cercanas y cultura local.</p>
+      {/* Sección inferior visible */}
+      <div className="container text-white mt-5 mb-5" style={{ position: 'relative', zIndex: 2 }}>
+        <div className="row bg-dark bg-opacity-75 p-4 rounded">
+          <div className="col-md-6 text-center">
+            <h3>Síguenos</h3>
+            <p>@CieloAzulHotel en Instagram, Facebook y Twitter</p>
           </div>
-        )}
-
-        {activeTab === 'comodidades' && (
-          <div>
-            <h2>Comodidades</h2>
-            <p>Piscina, spa, restaurante gourmet y más.</p>
+          <div className="col-md-6 text-center">
+            <h3>Nuestras Sedes</h3>
+            <p>Playa del Carmen • Tulum • Bacalar</p>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
