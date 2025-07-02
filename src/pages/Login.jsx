@@ -1,85 +1,50 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+    try {
+      const res = await axios.post("http://localhost:8000/api/login", { email, password });
+      const { usuario, cliente, token } = res.data;
 
-    // Guardar un usuario de ejemplo directamente en sessionStorage
-    sessionStorage.setItem("usuario", JSON.stringify({
-      nombre: "Juanita Ramírez",
-      email: "juana@hotel.com"
-    }));
+      sessionStorage.setItem("usuario", JSON.stringify(usuario));
+      if (cliente) sessionStorage.setItem("cliente", JSON.stringify(cliente));
+      sessionStorage.setItem("token", token);
 
-    navigate("/");
+      setMensaje("¡Inicio de sesión exitoso!");
+
+      setTimeout(() => {
+        const redir = sessionStorage.getItem("redireccionReserva") || "/";
+        sessionStorage.removeItem("redireccionReserva");
+        navigate(redir);
+        window.location.reload();
+      }, 1500);
+    } catch {
+      setError("Credenciales inválidas");
+    }
   };
 
-  const handleIrAReserva = () => {
-    sessionStorage.setItem("usuario", JSON.stringify({
-      nombre: "Juanita Ramírez",
-      email: "juana@hotel.com"
-    }));
-
-    navigate("/reservar");
-  };
+  if (mensaje) {
+    return <div style={{ ...centrado }}> {mensaje} </div>;
+  }
 
   return (
-    <div style={{
-      maxWidth: '400px',
-      margin: '60px auto',
-      padding: '30px',
-      borderRadius: '12px',
-      backgroundColor: '#ffffff',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-    }}>
-      <h2 style={{ textAlign: 'center', color: '#0a9396', marginBottom: '20px' }}>Iniciar Sesión</h2>
-
+    <div style={{ ...contenedorLogin }}>
+      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
       <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Correo"
-          required
-          style={{ width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '6px', border: '1px solid #ccc' }}
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          required
-          style={{ width: '100%', padding: '10px', marginBottom: '20px', borderRadius: '6px', border: '1px solid #ccc' }}
-        />
-        <button
-          type="submit"
-          style={{
-            width: '100%',
-            backgroundColor: '#0a9396',
-            color: '#fff',
-            padding: '12px',
-            border: 'none',
-            borderRadius: '8px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
-        >
-          Iniciar sesión
-        </button>
+        {/* inputs */}
       </form>
-
-      <button
-        onClick={handleIrAReserva}
-        style={{
-          marginTop: '20px',
-          backgroundColor: '#005f73',
-          color: '#fff',
-          padding: '10px',
-          border: 'none',
-          borderRadius: '8px',
-          width: '100%',
-          fontWeight: 'bold',
-          cursor: 'pointer'
-        }}
-      >
-        Registrarse y Reservar
+      <button onClick={() => navigate("/registro-cliente")} style={botonRegistrarse}>
+        Registrarse
       </button>
     </div>
   );
