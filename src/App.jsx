@@ -9,7 +9,8 @@ import Habitaciones from "./pages/Habitaciones";
 import DetalleHabitacion from "./pages/DetalleHabitacion";
 import Login from "./pages/Login";
 import FormularioReserva from "./pages/FormularioReserva";
-import MisReservas from "./pages/MisReservas"; // 👈 AGREGA ESTA LÍNEA
+import MisReservas from "./pages/MisReservas";
+import RegistroCliente from "./pages/RegistroCliente";
 
 import "./index.css";
 
@@ -26,9 +27,8 @@ function App() {
           <Route path="/habitaciones" element={<Habitaciones />} />
           <Route path="/habitacion/:id" element={<DetalleHabitacion />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/reservar" element={<FormularioReserva />} />
-
-          {/* ✅ Conectamos tu página de MisReservas */}
+          <Route path="/reservar/:id" element={<FormularioReserva />} />
+          <Route path="/registro" element={<RegistroCliente />} />
           <Route path="/mis-reservas" element={<MisReservas />} />
         </Routes>
       </div>

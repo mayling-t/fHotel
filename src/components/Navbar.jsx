@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import logo from "../assets/logol.jpg";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaChevronDown } from "react-icons/fa";
 
 export default function Navbar() {
   const location = useLocation();
@@ -22,6 +22,7 @@ export default function Navbar() {
 
   const cerrarSesion = () => {
     sessionStorage.removeItem("usuario");
+    sessionStorage.removeItem("token");
     setUsuario(null);
     setMostrarPerfil(false);
     navigate("/");
@@ -67,30 +68,19 @@ export default function Navbar() {
             Reservar ahora
           </NavLink>
 
-          {!usuario && (
-            <NavLink
-              to="/login"
-              className="rounded-pill px-4 py-2"
-              style={{
-                backgroundColor: "#a2d2ff", // Celeste pastel
-                color: "#003049",           // Texto azul oscuro
-                border: "1px solid #a2d2ff",
-                fontWeight: "bold",
-                textDecoration: "none"
-              }}
-            >
-              Iniciar sesión
-            </NavLink>
-          )}
-
           {usuario && (
             <div style={{ position: "relative" }}>
-              <FaUserCircle
-                size={30}
-                color="#0a9396"
-                style={{ cursor: "pointer" }}
+              <div
                 onClick={() => setMostrarPerfil(!mostrarPerfil)}
-              />
+                style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+              >
+                <FaUserCircle size={30} color="#0a9396" />
+                <span style={{ marginLeft: "8px", fontWeight: "bold", color: "#0a9396" }}>
+                  {usuario.nombre}
+                </span>
+                <FaChevronDown style={{ marginLeft: "5px", color: "#0a9396" }} />
+              </div>
+
               {mostrarPerfil && (
                 <div style={{
                   position: "absolute",
@@ -102,10 +92,11 @@ export default function Navbar() {
                   padding: "10px",
                   boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   zIndex: 10,
-                  minWidth: "200px"
+                  minWidth: "220px"
                 }}>
                   <p style={{ margin: 0 }}><strong>Nombre:</strong> {usuario.nombre}</p>
                   <p style={{ margin: 0 }}><strong>Correo:</strong> {usuario.email}</p>
+                  {usuario.rol && <p style={{ margin: 0 }}><strong>Rol:</strong> {usuario.rol}</p>}
                   <button
                     onClick={cerrarSesion}
                     style={{

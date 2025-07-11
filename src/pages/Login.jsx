@@ -1,86 +1,81 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Login() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    // Guardar un usuario de ejemplo directamente en sessionStorage
-    sessionStorage.setItem("usuario", JSON.stringify({
-      nombre: "Juanita Ramírez",
-      email: "juana@hotel.com"
-    }));
+    try {
+      const response = await axios.post(`${API_URL}/api/login`, {
+        email,
+        password,
+      });
 
-    navigate("/");
-  };
+      const { token, usuario } = response.data;
 
-  const handleIrAReserva = () => {
-    sessionStorage.setItem("usuario", JSON.stringify({
-      nombre: "Juanita Ramírez",
-      email: "juana@hotel.com"
-    }));
+      sessionStorage.setItem("usuario", JSON.stringify(usuario));
+      sessionStorage.setItem("token", token);
 
-    navigate("/reservar");
+      const redirigirA = sessionStorage.getItem("redireccionReserva");
+      if (redirigirA) {
+        sessionStorage.removeItem("redireccionReserva");
+        navigate(redirigirA);
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      setError("Credenciales incorrectas o error del servidor.");
+    }
   };
 
   return (
-    <div style={{
-      maxWidth: '400px',
-      margin: '60px auto',
-      padding: '30px',
-      borderRadius: '12px',
-      backgroundColor: '#ffffff',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-    }}>
-      <h2 style={{ textAlign: 'center', color: '#0a9396', marginBottom: '20px' }}>Iniciar Sesión</h2>
-
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Correo"
-          required
-          style={{ width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '6px', border: '1px solid #ccc' }}
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          required
-          style={{ width: '100%', padding: '10px', marginBottom: '20px', borderRadius: '6px', border: '1px solid #ccc' }}
-        />
-        <button
-          type="submit"
-          style={{
-            width: '100%',
-            backgroundColor: '#0a9396',
-            color: '#fff',
-            padding: '12px',
-            border: 'none',
-            borderRadius: '8px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
-        >
+    <div style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
+      <h2>Iniciar Sesión</h2>
+      {error && <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label>Email:</label>
+          <input
+            type="email"
+            className="form-control"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label>Contraseña:</label>
+          <input
+            type="password"
+            className="form-control"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary w-100">
           Iniciar sesión
         </button>
       </form>
 
-      <button
-        onClick={handleIrAReserva}
-        style={{
-          marginTop: '20px',
-          backgroundColor: '#005f73',
-          color: '#fff',
-          padding: '10px',
-          border: 'none',
-          borderRadius: '8px',
-          width: '100%',
-          fontWeight: 'bold',
-          cursor: 'pointer'
-        }}
-      >
-        Registrarse y Reservar
-      </button>
+      <p style={{ marginTop: "15px", textAlign: "center" }}>
+        ¿No tienes una cuenta?{" "}
+        <span
+          onClick={() => navigate("/registro")}
+          style={{ color: "#0a9396", cursor: "pointer", fontWeight: "bold" }}
+        >
+          Regístrate aquí
+        </span>
+      </p>
     </div>
   );
 }
