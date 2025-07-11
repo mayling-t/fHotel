@@ -7,6 +7,8 @@ import imgDoble from "../assets/doble.jpg";
 import imgSuite from "../assets/suite.jpg";
 import imgReparacion from "../assets/reparacion.jpg";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function DetalleHabitacion() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ export default function DetalleHabitacion() {
   useEffect(() => {
     const fetchHabitacion = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/habitaciones/${id}`);
+        const response = await axios.get(`${API_URL}/api/habitaciones/${id}`);
         setHabitacion(response.data);
       } catch (error) {
         console.error("Error al cargar los detalles de la habitación:", error);
@@ -24,15 +26,6 @@ export default function DetalleHabitacion() {
 
     fetchHabitacion();
   }, [id]);
-
-  const handleReservar = () => {
-    const usuario = sessionStorage.getItem("usuario");
-    if (!usuario) {
-      navigate("/login");
-    } else {
-      navigate(`/reservar/${id}`);
-    }
-  };
 
   const obtenerImagen = (tipo) => {
     switch (tipo?.toLowerCase()) {
@@ -47,7 +40,8 @@ export default function DetalleHabitacion() {
     }
   };
 
-  if (!habitacion) return <p style={{ textAlign: "center", marginTop: "40px" }}>Cargando detalles...</p>;
+  if (!habitacion)
+    return <p style={{ textAlign: "center", marginTop: "40px" }}>Cargando detalles...</p>;
 
   return (
     <div style={{
@@ -62,12 +56,17 @@ export default function DetalleHabitacion() {
       <p><strong>Precio:</strong> S/{habitacion.precio} por noche</p>
       <p><strong>Descripción:</strong> {habitacion.descripcion}</p>
 
-      <button onClick={handleReservar}
-        style={{
-          marginTop: "25px", backgroundColor: "#0a9396", color: "#fff",
-          padding: "12px 20px", border: "none", borderRadius: "8px",
-          fontSize: "16px", fontWeight: "bold", cursor: "pointer"
-        }}>
+      <button
+        className="btn btn-success"
+        onClick={() => {
+          const usuario = JSON.parse(sessionStorage.getItem("usuario"));
+          if (!usuario) {
+            navigate("/login");
+          } else {
+            navigate(`/reservar/${id}`);
+          }
+        }}
+      >
         Reservar esta habitación
       </button>
     </div>

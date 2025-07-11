@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { crearReserva } from "../services/ReservaService";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function FormularioReserva() {
-  const { id } = useParams();
+  const { id } = useParams(); // ID de la habitación
   const navigate = useNavigate();
   const [habitacion, setHabitacion] = useState(null);
   const [fechaInicio, setFechaInicio] = useState("");
@@ -12,7 +14,7 @@ export default function FormularioReserva() {
   const [reservaExitosa, setReservaExitosa] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/habitaciones/${id}`)
+    axios.get(`${API_URL}/api/habitaciones/${id}`)
       .then((r) => setHabitacion(r.data))
       .catch(() => alert("Error al obtener habitación"));
   }, [id]);
@@ -20,32 +22,41 @@ export default function FormularioReserva() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const usuarioRaw = sessionStorage.getItem("usuario");
+
+    if (!usuarioRaw) {
+      sessionStorage.setItem("redireccionReserva", `/reservar/${id}`);
+      return navigate("/login");
+    }
+
+    const usuario = JSON.parse(usuarioRaw);
+
     try {
-      const clienteRaw = sessionStorage.getItem("cliente");
-
-      if (!clienteRaw) {
-        sessionStorage.setItem("redireccionReserva", `/reservar/${id}`);
-        return navigate("/login");
-      }
-
-      const cliente = JSON.parse(clienteRaw);
+      // Obtener el cliente asociado al usuario
+      const response = await axios.get(`${API_URL}/api/cliente/usuario/${usuario.id}`);
+      const cliente = response.data;
 
       const data = {
         idCliente: cliente.id,
         idHabitacion: id,
         fechaInicio,
-        fechaFin,
+        fechaFin
       };
 
       await crearReserva(data);
 
       setReservaExitosa(true);
 
-      // Redirige a "Mis Reservas" después de 2 segundos
       setTimeout(() => navigate("/mis-reservas"), 2000);
     } catch (error) {
-      alert("Error al realizar reserva");
-      console.error(error);
+      console.error("Error al realizar reserva", error);
+      const errores = error?.response?.data?.errors;
+      if (errores) {
+        const mensaje = Object.values(errores).flat().join("\n");
+        alert("Errores de validación:\n" + mensaje);
+      } else {
+        alert("Error al realizar la reserva");
+      }
     }
   };
 
@@ -71,10 +82,20 @@ export default function FormularioReserva() {
       </h2>
       <form onSubmit={handleSubmit}>
         <label>Fecha de inicio</label>
-        <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} required />
+        <input
+          type="date"
+          value={fechaInicio}
+          onChange={(e) => setFechaInicio(e.target.value)}
+          required
+        />
 
         <label>Fecha de fin</label>
-        <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} required />
+        <input
+          type="date"
+          value={fechaFin}
+          onChange={(e) => setFechaFin(e.target.value)}
+          required
+        />
 
         <button type="submit" style={{
           marginTop: "20px", backgroundColor: "#0077b6", color: "#fff",

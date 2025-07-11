@@ -28,7 +28,7 @@ function App() {
           <Route path="/habitacion/:id" element={<DetalleHabitacion />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reservar/:id" element={<FormularioReserva />} />
-          <Route path="/registro-cliente" element={<RegistroCliente />} />
+          <Route path="/registro" element={<RegistroCliente />} />
           <Route path="/mis-reservas" element={<MisReservas />} />
         </Routes>
       </div>

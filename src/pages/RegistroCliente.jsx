@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function RegistroCliente() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -27,10 +29,10 @@ export default function RegistroCliente() {
     setError("");
 
     try {
-      await axios.post("http://localhost:8000/api/registro-cliente", formData);
+      await axios.post(`${API_URL}/api/registro-cliente`, formData);
 
       // Hacemos login automático
-      const res = await axios.post("http://localhost:8000/api/login", {
+      const res = await axios.post(`${API_URL}/api/login`, {
         email: formData.email,
         password: formData.password,
       });
@@ -49,8 +51,8 @@ export default function RegistroCliente() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          JSON.stringify(err.response?.data) ||
-          "Error al registrar."
+        JSON.stringify(err.response?.data) ||
+        "Error al registrar."
       );
     }
   };

@@ -1,41 +1,58 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function MisReservas() {
   const [reservas, setReservas] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const clienteRaw = sessionStorage.getItem("cliente");
+    const usuarioRaw = sessionStorage.getItem("usuario");
 
-    if (!clienteRaw) {
+    if (!usuarioRaw) {
       alert("Por favor inicia sesión para ver tus reservas.");
-      return;
+      return navigate("/login");
     }
 
-    let cliente;
+    let usuario;
     try {
-      cliente = JSON.parse(clienteRaw);
+      usuario = JSON.parse(usuarioRaw);
     } catch {
-      alert("Error al leer datos del cliente. Inicia sesión nuevamente.");
-      return;
+      alert("Error al leer datos del usuario. Inicia sesión nuevamente.");
+      return navigate("/login");
     }
 
     const token = sessionStorage.getItem("token");
 
-    axios.get(`http://localhost:8000/api/reservas/cliente/${cliente.id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => {
-      setReservas(res.data);
-      setCargando(false);
-    })
-    .catch(() => {
-      alert("Error al obtener las reservas");
-      setCargando(false);
-    });
+    // Obtener cliente asociado al usuario
+    axios
+      .get(`${API_URL}/api/cliente/usuario/${usuario.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((resCliente) => {
+        const clienteId = resCliente.data.id;
+
+        // Obtener reservas de ese cliente
+        return axios.get(`${API_URL}/api/reservas/cliente/${clienteId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      })
+      .then((resReservas) => {
+        setReservas(resReservas.data);
+        setCargando(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("Error al obtener las reservas");
+        setCargando(false);
+      });
   }, []);
 
   if (cargando) {
