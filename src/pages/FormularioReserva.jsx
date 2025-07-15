@@ -2,8 +2,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { crearReserva } from "../services/ReservaService";
+import { obtenerClientePorUsuario } from "../services/ClienteService";
 
-const API_URL = import.meta.env.VITE_API_URL;
+//const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = 'http://127.0.0.1:8000';
 
 export default function FormularioReserva() {
   const { id } = useParams(); // ID de la habitación
@@ -32,9 +34,7 @@ export default function FormularioReserva() {
     const usuario = JSON.parse(usuarioRaw);
 
     try {
-      // Obtener el cliente asociado al usuario
-      const response = await axios.get(`${API_URL}/api/cliente/usuario/${usuario.id}`);
-      const cliente = response.data;
+      const cliente = await obtenerClientePorUsuario(usuario.id);
 
       const data = {
         idCliente: cliente.id,
@@ -46,7 +46,6 @@ export default function FormularioReserva() {
       await crearReserva(data);
 
       setReservaExitosa(true);
-
       setTimeout(() => navigate("/mis-reservas"), 2000);
     } catch (error) {
       console.error("Error al realizar reserva", error);
