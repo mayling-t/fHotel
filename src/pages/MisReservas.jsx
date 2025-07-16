@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-// IMPORTAR LAS IMÁGENES DE TUS HABITACIONES
-import dobleImg from "../assets/doble.jpg";
-import simpleImg from "../assets/simple.jpg";
-import suiteImg from "../assets/suite.jpg";
-
 const API_URL = import.meta.env.VITE_API_URL;
+
 //const API_URL = 'http://127.0.0.1:8000';
 
 export default function MisReservas() {
