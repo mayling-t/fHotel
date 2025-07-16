@@ -7,7 +7,9 @@ import imgDoble from "../assets/doble.jpg";
 import imgSuite from "../assets/suite.jpg";
 import imgReparacion from "../assets/reparacion.jpg";
 
+// Usamos la variable de entorno
 const API_URL = import.meta.env.VITE_API_URL;
+//const API_URL = 'http://127.0.0.1:8000'; 
 
 export default function DetalleHabitacion() {
   const { id } = useParams();
