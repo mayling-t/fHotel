@@ -4,8 +4,6 @@ import axios from "axios";
 import { crearReserva } from "../services/ReservaService";
 import { obtenerClientePorUsuario } from "../services/ClienteService";
 
-//const API_URL = import.meta.env.VITE_API_URL;
-//const API_URL = 'http://127.0.0.1:8000';
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function FormularioReserva() {
@@ -36,12 +34,18 @@ export default function FormularioReserva() {
 
     try {
       const cliente = await obtenerClientePorUsuario(usuario.id);
+      console.log("Cliente obtenido:", cliente);
+
+      if (!cliente || !cliente.id) {
+        alert("No se encontró cliente vinculado al usuario");
+        return;
+      }
 
       const data = {
         idCliente: cliente.id,
         idHabitacion: id,
         fechaInicio,
-        fechaFin
+        fechaFin,
       };
 
       await crearReserva(data);
@@ -49,25 +53,22 @@ export default function FormularioReserva() {
       setReservaExitosa(true);
       setTimeout(() => navigate("/mis-reservas"), 2000);
     } catch (error) {
-  console.error("Error al realizar reserva", error);
-  
-  if (error.response) {
-    // Si es error 400 con mensaje personalizado del backend
-    if (error.response.status === 400 && error.response.data.mensaje) {
-      alert(error.response.data.mensaje);
-      return;
-    }
-    // Si hay errores de validación (Laravel normalmente los manda en 'errors')
-    if (error.response.data.errors) {
-      const mensaje = Object.values(error.response.data.errors).flat().join("\n");
-      alert("Errores de validación:\n" + mensaje);
-      return;
-    }
-  }
+      console.error("Error al realizar reserva", error);
 
-  alert("Error al realizar la reserva");
-}
+      if (error.response) {
+        if (error.response.status === 400 && error.response.data.mensaje) {
+          alert(error.response.data.mensaje);
+          return;
+        }
+        if (error.response.data.errors) {
+          const mensaje = Object.values(error.response.data.errors).flat().join("\n");
+          alert("Errores de validación:\n" + mensaje);
+          return;
+        }
+      }
 
+      alert("Error al realizar la reserva");
+    }
   };
 
   if (reservaExitosa) {
