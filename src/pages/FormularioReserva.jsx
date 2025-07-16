@@ -48,15 +48,25 @@ export default function FormularioReserva() {
       setReservaExitosa(true);
       setTimeout(() => navigate("/mis-reservas"), 2000);
     } catch (error) {
-      console.error("Error al realizar reserva", error);
-      const errores = error?.response?.data?.errors;
-      if (errores) {
-        const mensaje = Object.values(errores).flat().join("\n");
-        alert("Errores de validación:\n" + mensaje);
-      } else {
-        alert("Error al realizar la reserva");
-      }
+  console.error("Error al realizar reserva", error);
+  
+  if (error.response) {
+    // Si es error 400 con mensaje personalizado del backend
+    if (error.response.status === 400 && error.response.data.mensaje) {
+      alert(error.response.data.mensaje);
+      return;
     }
+    // Si hay errores de validación (Laravel normalmente los manda en 'errors')
+    if (error.response.data.errors) {
+      const mensaje = Object.values(error.response.data.errors).flat().join("\n");
+      alert("Errores de validación:\n" + mensaje);
+      return;
+    }
+  }
+
+  alert("Error al realizar la reserva");
+}
+
   };
 
   if (reservaExitosa) {

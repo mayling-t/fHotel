@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   obtenerHabitacionesDisponibles,
   obtenerTodasHabitaciones,
+  obtenerDisponibilidadPorHabitacion,
 } from "../services/habitacionService";
 
 import imgDoble from "../assets/doble.jpg";
@@ -16,6 +17,7 @@ export default function Habitaciones() {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [tipo, setTipo] = useState("");
+  const [disponibilidades, setDisponibilidades] = useState({}); // { idHabitacion: [{desde, hasta}, ...] }
 
   useEffect(() => {
     const cargarHabitaciones = async () => {
@@ -39,6 +41,20 @@ export default function Habitaciones() {
     try {
       const data = await obtenerHabitacionesDisponibles(fechaInicio, fechaFin, tipo);
       setHabitaciones(data);
+
+      // Obtener disponibilidades por habitación
+      const dispObj = {};
+      for (const hab of data) {
+        try {
+          const res = await obtenerDisponibilidadPorHabitacion(hab.id, fechaInicio, fechaFin);
+          dispObj[hab.id] = res.disponibilidades || [];
+        } catch (error) {
+          console.error(`Error al obtener disponibilidad para habitación ${hab.id}:`, error);
+          dispObj[hab.id] = [];
+        }
+      }
+      setDisponibilidades(dispObj);
+
     } catch (error) {
       console.error("Error al buscar habitaciones:", error);
       alert("Error al cargar habitaciones disponibles.");
@@ -56,6 +72,19 @@ export default function Habitaciones() {
       default:
         return imgReparacion;
     }
+  };
+
+  // Función para mostrar el estado con color
+  const mostrarEstado = (estado) => {
+    const color =
+      estado === "disponible" ? "green" :
+      estado === "ocupada" ? "red" :
+      estado === "mantenimiento" ? "orange" : "gray";
+    return (
+      <span style={{ color, fontWeight: "bold" }}>
+        {estado.charAt(0).toUpperCase() + estado.slice(1)}
+      </span>
+    );
   };
 
   return (
@@ -104,8 +133,10 @@ export default function Habitaciones() {
       {/* Habitaciones disponibles */}
       {habitaciones.length > 0 && (
         <div className="row">
-          <h4 className="mb-3 py-2 titulo-cursiva text-white text-center"
-            style={{ backgroundColor: "#3E54AC", borderRadius: "8px" }}>
+          <h4
+            className="mb-3 py-2 titulo-cursiva text-white text-center"
+            style={{ backgroundColor: "#3E54AC", borderRadius: "8px" }}
+          >
             Habitaciones disponibles
           </h4>
           {habitaciones.map((hab) => (
@@ -128,6 +159,25 @@ export default function Habitaciones() {
                   <p className="card-text">
                     <strong>Capacidad:</strong> {hab.capacidad} personas
                   </p>
+
+                  <p className="card-text">
+                    <strong>Estado:</strong> {mostrarEstado(hab.estado)}
+                  </p>
+
+                  {/* Mostrar fechas disponibles */}
+                  {disponibilidades[hab.id] && disponibilidades[hab.id].length > 0 && (
+                    <div className="mb-2">
+                      <strong>Fechas disponibles:</strong>
+                      <ul>
+                        {disponibilidades[hab.id].map(({ desde, hasta }, index) => (
+                          <li key={index}>
+                            {desde} {hasta ? `- ${hasta}` : ""}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <Link to={`/habitacion/${hab.id}`} className="btn btn-primary w-100">
                     Ver detalles
                   </Link>
@@ -162,6 +212,11 @@ export default function Habitaciones() {
                   <p className="card-text">
                     <strong>Capacidad:</strong> {hab.capacidad} personas
                   </p>
+
+                  <p className="card-text">
+                    <strong>Estado:</strong> {mostrarEstado(hab.estado)}
+                  </p>
+
                   <Link to={`/habitacion/${hab.id}`} className="btn btn-primary w-100">
                     Ver detalles
                   </Link>
