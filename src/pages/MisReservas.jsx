@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 // IMPORTAR LAS IMÁGENES DE TUS HABITACIONES
 import dobleImg from "../assets/doble.jpg";
 import simpleImg from "../assets/simple.jpg";
@@ -10,9 +9,6 @@ import suiteImg from "../assets/suite.jpg";
 
 const API_URL = import.meta.env.VITE_API_URL;
 //const API_URL = 'http://127.0.0.1:8000';
-=======
-const API_URL = 'http://127.0.0.1:8000';
-
 
 export default function MisReservas() {
   const [reservasOriginal, setReservasOriginal] = useState([]);
@@ -322,11 +318,9 @@ export default function MisReservas() {
             const precio = reserva.habitacion?.precio;
             const precioFormateado = typeof precio === 'number' ? precio.toFixed(2) : "0.00";
 
-            let imagenHabitacion = simpleImg; // por defecto
-            if (reserva.habitacion?.numero?.toLowerCase().includes("doble")) {
-              imagenHabitacion = dobleImg;
-            } else if (reserva.habitacion?.numero?.toLowerCase().includes("suite")) {
-              imagenHabitacion = suiteImg;
+            let imagenHabitacion = "/src/assets/simple.jpg"; // Por defecto
+            if (reserva.habitacion?.imagen) {
+              imagenHabitacion = `/src/assets/${reserva.habitacion.imagen}`;
             }
 
             return (
