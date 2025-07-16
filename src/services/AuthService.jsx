@@ -2,13 +2,12 @@
 
 import axios from "axios";
 
-// Usamos variable de entorno
-//const API = axios.create({
- // baseURL: import.meta.env.VITE_API_URL,
-  //withCredentials: true,
-//});
+ //Usamos variable de entorno
+const API = axios.create({
+ baseURL: import.meta.env.VITE_API_URL,
+withCredentials: true,
+});
 //const API_URL = 'http://127.0.0.1:8000';
-const API_URL = import.meta.env.VITE_API_URL;
 
 
 export const login = async (email, password) => {
