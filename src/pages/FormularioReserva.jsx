@@ -22,11 +22,23 @@ export default function FormularioReserva() {
       .catch(() => alert("Error al obtener habitación"));
   }, [id]);
 
+  // Si la reserva fue exitosa, muestra mensaje y redirige
+  if (reservaExitosa) {
+    return (
+      <div style={{
+        height: "100vh", display: "flex", justifyContent: "center",
+        alignItems: "center", fontSize: "24px",
+        backgroundColor: "#d8f3dc", color: "#2a9d8f"
+      }}>
+        ✅ ¡Reserva realizada con éxito! Redirigiendo a tus reservas...
+      </div>
+    );
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const usuarioRaw = sessionStorage.getItem("usuario");
-
     if (!usuarioRaw) {
       sessionStorage.setItem("redireccionReserva", `/reservar/${id}`);
       return navigate("/login");
@@ -39,22 +51,25 @@ export default function FormularioReserva() {
       console.log("Cliente obtenido:", cliente);
 
       if (!cliente || !cliente.id) {
-  alert("No se encontró cliente vinculado al usuario");
-  return;
-}
+        alert("No se encontró cliente vinculado al usuario");
+        return;
+      }
 
-const data = {
-  idCliente: cliente.id, // usar cliente.id, no cliente.idCliente
-  idHabitacion: id,
-  fechaInicio,
-  fechaFin,
-};
-
+      const data = {
+        idCliente: cliente.id,
+        idHabitacion: id,
+        fechaInicio,
+        fechaFin,
+      };
 
       await crearReserva(data);
 
       setReservaExitosa(true);
-      setTimeout(() => navigate("/mis-reservas"), 2000);
+
+      setTimeout(() => {
+        navigate("/mis-reservas");
+      }, 2000);
+
     } catch (error) {
       console.error("Error al realizar reserva", error);
 
@@ -73,18 +88,6 @@ const data = {
       alert("Error al realizar la reserva");
     }
   };
-
-  if (reservaExitosa) {
-    return (
-      <div style={{
-        height: "100vh", display: "flex", justifyContent: "center",
-        alignItems: "center", fontSize: "24px",
-        backgroundColor: "#d8f3dc", color: "#2a9d8f"
-      }}>
-        ✅ ¡Reserva realizada con éxito! Redirigiendo a tus reservas...
-      </div>
-    );
-  }
 
   return (
     <div style={{
