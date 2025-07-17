@@ -38,17 +38,18 @@ export default function FormularioReserva() {
       const cliente = await obtenerClientePorUsuario(usuario.id);
       console.log("Cliente obtenido:", cliente);
 
-      if (!cliente || !cliente.idCliente) {
+      if (!cliente || !cliente.id) {
   alert("No se encontró cliente vinculado al usuario");
   return;
 }
 
-      const data = {
-  idCliente: cliente.idCliente,  // <-- corregido aquí
-        idHabitacion: id,
-        fechaInicio,
-        fechaFin,
-      };
+const data = {
+  idCliente: cliente.id, // usar cliente.id, no cliente.idCliente
+  idHabitacion: id,
+  fechaInicio,
+  fechaFin,
+};
+
 
       await crearReserva(data);
 
