@@ -78,9 +78,10 @@ export default function MisReservas() {
 
       if (reserva.estado === "finalizada") {
         // Si la reserva está pagada, obtenemos el pago
-        const resPago = await axios.get(`${API_URL}/api/pagos/${reserva.id}`, {
-          headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-        });
+        const resPago = await axios.get(`${API_URL}/api/pagos/reserva/${reserva.id}`, {
+  headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+});
+
         setDetallePago(resPago.data);
       } else {
         setDetallePago(null);
